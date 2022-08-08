@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form name="f" th:action="@{/personal/operations}" method="post" style="margin-top: 5%; margin-left: 5%">
+    <label>
+         <input type="text" name="phone" placeholder="8 900 ... " style="margin-right: 2%">
+         <input type="text" name="sum" placeholder="0">
+    </label>
+    <input type="submit" value="Перевести" style="margin-top: 2%">
+</form>
+</body>
+</html>

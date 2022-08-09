@@ -3,6 +3,7 @@ package ru.maxryazan.bankterminal.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -10,6 +11,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
+
 @Table(name = "transactions")
 public class Transaction {
 
@@ -31,4 +33,9 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "recipient_id")
     private Client recipient;
+
+    @Override
+    public String toString() {
+        return "Транзакция от " + timestamp + ". Отправитель: " + sender + ". Получатель: " + recipient + ".  Сумма: " + sum;
+    }
 }

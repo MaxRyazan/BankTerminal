@@ -25,18 +25,25 @@ public class Client{
     String lastName;
     @Column(name = "phone_number")
     String phoneNumber;
+
     @Column(name = "hash_pin")
     String pinCode;
+
     @Column(name = "balance")
     double balance;
+
     @OneToMany(mappedBy = "borrower", fetch = FetchType.LAZY)
     List<Credit> credits;
-    @OneToMany(mappedBy = "contributor", fetch = FetchType.LAZY)
-    List<Contribution> contributions;
-    @OneToMany(mappedBy = "investor", fetch = FetchType.LAZY)
-    List<Investment> investments;
+
     @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
     List<Transaction> incoming;
+
     @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
     List<Transaction> outcoming;
+
+    @Override
+    public String toString() {
+        return firstName + " "  + lastName + " " + phoneNumber;
+
+    }
 }

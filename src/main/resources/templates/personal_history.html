@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    .container{
+        margin-top: 2%;
+        margin-left: 15%;
+        margin-right: 15%;
+        min-width: 70%;
+        min-height: 200px;
+        max-width: 70%;
+        max-height: 200px;
+        overflow-y: scroll;
+        border: 3px solid black;
+        background-color: white;
+    }
+    .content{
+        padding: 10px;
+    }
+    .header{
+        text-align: center;
+        font-weight: bold;
+        background-color: darksalmon;
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+</style>
+<body style="background-color: dimgray">
+<div class="container">
+    <div class="header">
+        <h3>Переводы за неделю:</h3>
+    </div>
+    <div th:each="transaction : ${transactionsForLastWeek}">
+        <div th:text="${transaction}" class="content"></div>
+    </div>
+</div>
+<div class="container">
+    <div class="header">
+        <h3>Платежи за неделю:</h3>
+    </div>
+    <div th:each="pay : ${paysForLastWeek}">
+        <div th:text="${pay}" class="content"></div>
+    </div>
+</div>
+</body>
+</html>

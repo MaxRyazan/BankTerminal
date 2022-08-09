@@ -29,10 +29,6 @@ public class MainController {
         return "/login";
     }
 
-    @GetMapping("/personal/credit")
-    public String getCredits() {
-        return "personal_credit";
-    }
 
     @GetMapping("/personal/add-money")
     public String getAddMoneyPage() {
@@ -75,6 +71,25 @@ public class MainController {
     public String postOperationsPage(@RequestParam int sum,
                                      @RequestParam String phone) {
         clientService.doTransaction(sum, phone);
+        return "redirect:/personal";
+    }
+
+    @GetMapping("/personal/history")
+    public String getHistoryPage(Model model) {
+        model.addAttribute("transactionsForLastWeek", clientService.transactionsForLastWeek());
+        model.addAttribute("paysForLastWeek", clientService.paysForLastWeek());
+        return "personal_history";
+    }
+
+    @GetMapping("/personal/credit")
+    public String getCreditPage(Model model) {
+        model.addAttribute("credits", clientService.showCredits());
+        return "personal_credit";
+    }
+
+    @PostMapping("/personal/credit")
+    public String postCreditPage(@RequestParam String creditID, @RequestParam double sum) {
+        clientService.getPayForCredit(creditID, sum);
         return "redirect:/personal";
     }
 }

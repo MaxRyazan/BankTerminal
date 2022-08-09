@@ -1,6 +1,9 @@
 package ru.maxryazan.bankterminal.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.maxryazan.bankterminal.model.Client;
 import ru.maxryazan.bankterminal.service.ClientService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
+
 @Controller
 @RequiredArgsConstructor
 public class MainController {
@@ -16,7 +23,21 @@ public class MainController {
 
     @GetMapping("/")
     public String getMain() {
+        return "redirect:/login";
+    }
+
+    @GetMapping("/login")
+    public String login() {
         return "main_page";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null){
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        return "redirect:/login";
     }
 
     @GetMapping("/personal")
@@ -24,10 +45,7 @@ public class MainController {
         return "personal_page";
     }
 
-    @GetMapping("/login")
-    public String login() {
-        return "/login";
-    }
+
 
 
     @GetMapping("/personal/add-money")

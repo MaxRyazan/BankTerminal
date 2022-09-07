@@ -22,26 +22,34 @@
         }
         .styleInput {
             width: 100px;
-            height: 40px
+            height: 40px;
+            margin-left: 2%;
         }
         .styleInput2 {
             width: 250px;
             height: 40px;
             margin-top: 5%;
         }
+        .styleInput3 {
+            width: 100px;
+            height: 40px;
+            margin-left: 2%;
+            background-color: lightcoral;
+        }
     </style>
 </head>
 <body class="divAddMoney">
 <div class="container">
-    <h3 style="float: left">Баланс: </h3>
-    <div th:text="${balance}" style="margin-left: 10%; margin-top: 2.5%"></div>
+    <h3 style="float: left; margin-left: 2%">Баланс: </h3>
+    <div th:text="${balance}" style="margin-left: 12%; margin-top: 2.5%"></div>
     <div style="margin-top: 5%; margin-left: 2%">
-        <input type="button" value="Пополнить баланс" onclick="location.href='/personal/add-money'" class="styleInput2">
+        <input type="button" value="Пополнить баланс" onclick="location.href='/personal/add-money'" class="styleInput2" style="background-color: lightgreen">
     </div>
-    <div style="margin-top: 25%; margin-left: 70%">
-        <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
-        <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput" style="margin-left: 3.5%">
-    </div>
+        <div style="margin-top: 20%; margin-left: 55%">
+            <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
+            <input type="button" value="На главную" onclick="location.href='/personal'" class="styleInput" style="float: left">
+            <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput3">
+        </div>
 </div>
 </body>
 </html>

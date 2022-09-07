@@ -9,4 +9,6 @@ import ru.maxryazan.bankterminal.model.Client;
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
     Client findByPhoneNumber(String phoneNumber);
+
+    boolean existsByPhoneNumber(String phoneNumber);
 }

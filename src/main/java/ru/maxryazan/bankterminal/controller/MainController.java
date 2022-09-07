@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.maxryazan.bankterminal.model.Client;
 import ru.maxryazan.bankterminal.service.ClientService;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +28,7 @@ public class MainController {
     public String login() {
         return "main_page";
     }
+
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
@@ -65,12 +64,16 @@ public class MainController {
     }
 
     @PostMapping("/personal/withdraw-money")
-    public String postWithdrawMoneyPage(@RequestParam int sum) {
+    public String postWithdrawMoneyPage(@RequestParam int sum, Model model) {
+        if (clientService.validateSum(sum, model)) {
+            return "personal_withdraw_money";
+        }
         sum = -sum;
         Client client = clientService.findByAuthentication();
         clientService.changeBalance(sum, client);
         return "redirect:/personal";
     }
+
 
     @GetMapping("/personal/balance")
     public String getBalancePage(Model model) {
@@ -88,7 +91,18 @@ public class MainController {
 
     @PostMapping("/personal/operations")
     public String postOperationsPage(@RequestParam int sum,
-                                     @RequestParam String phone) {
+                                     @RequestParam String phone, Model model) {
+        if(!clientService.existsByPhone(phone)){
+            model.addAttribute("error", "Номер телефона не существует!");
+            model.addAttribute("balance",
+                    clientService.roundToTwoSymbolsAfterDot(clientService.findByAuthentication().getBalance()));
+            return "personal_operations";
+        }
+        if (clientService.validateSum(sum, model)) {
+            model.addAttribute("balance",
+                    clientService.roundToTwoSymbolsAfterDot(clientService.findByAuthentication().getBalance()));
+            return "personal_operations";
+        }
         clientService.doTransaction(sum, phone);
         return "redirect:/personal";
     }
@@ -107,7 +121,11 @@ public class MainController {
     }
 
     @PostMapping("/personal/credit")
-    public String postCreditPage(@RequestParam String creditID, @RequestParam double sum) {
+    public String postCreditPage(@RequestParam String creditID, @RequestParam int sum, Model model) {
+       if(clientService.validateSum(sum, model)) {
+           model.addAttribute("credits", clientService.showCredits());
+            return "personal_credit";
+        }
         clientService.getPayForCredit(creditID, sum);
         return "redirect:/personal";
     }

@@ -26,10 +26,11 @@
     <div class="container">
         <form name="f" th:action="@{/personal/credit}" method="post">
             <label>
-            <input type="text" name="creditID" placeholder="номер кредитного договора">
-            <input type="text" name="sum" placeholder="сумма взноса">
+            <input type="text" name="creditID" placeholder="номер кредитного договора" minlength="8" required>
+            <input type="text" name="sum" placeholder="сумма взноса" required>
             <input type="submit" value="Заплатить">
             </label>
+            <div th:text="${error}" style="color: red; margin-left: 2%; margin-top: 2%"></div>
         </form>
     </div>
 </body>

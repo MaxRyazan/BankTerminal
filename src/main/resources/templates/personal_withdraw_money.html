@@ -39,9 +39,10 @@
         <div th:text="${balance}" style="margin-left: 80%; margin-top: 5%; font-weight: bold; float: left"></div>
         <form name="f" th:action="@{/personal/withdraw-money}" method="post" style="margin-top: 5%">
         <label>
-            <input type="number" name="sum" min="0" placeholder="0.0" class="styleInput2">
+            <input type="number" name="sum" min="0" placeholder="0.0" class="styleInput2" required>
             <input type="submit" value="Снять" class="styleInput">
         </label>
+            <div th:text="${error}" style="margin-top: 5%; margin-left: 2%; color: red;"></div>
     </form>
     <div style="margin-top: 25%; margin-left: 70%">
         <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">

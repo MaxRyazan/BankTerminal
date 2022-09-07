@@ -40,10 +40,11 @@
     <div th:text="${balance}" style="margin-left: 80%; margin-top: 5%; font-weight: bold; float: left"></div>
     <form name="f" th:action="@{/personal/operations}" method="post" style="margin-top: 5%">
         <label>
-            <input type="text" name="phone" placeholder="Телефон" class="styleInput2">
-            <input type="text" name="sum" placeholder="Сумма" class="styleInput2" >
+            <input type="text" name="phone" placeholder="Телефон" class="styleInput2" required minlength="11">
+            <input type="text" name="sum" placeholder="Сумма" class="styleInput2" required>
             <input type="submit" value="Перевести" class="styleInput">
         </label>
+        <div th:text="${error}" style="color: red; margin-left: 25%; margin-top: 2%;"></div>
     </form>
     <div style="margin-top: 25%; margin-left: 70%">
         <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">

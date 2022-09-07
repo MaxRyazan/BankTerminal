@@ -3,6 +3,8 @@ package ru.maxryazan.bankterminal.service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.maxryazan.bankterminal.exception.exceptions.CreditNotFoundException;
 import ru.maxryazan.bankterminal.exception.exceptions.InvalidDataException;
 import ru.maxryazan.bankterminal.exception.exceptions.NotEnoughMoneyException;
@@ -25,6 +27,10 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
             throw new UserNotFoundException();
         }
         return cl;
+    }
+
+    public boolean existsByPhone(String phone){
+       return clientRepository.existsByPhoneNumber(phone);
     }
 
     public Client findByAuthentication() {
@@ -144,5 +150,19 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
 
     public double roundToTwoSymbolsAfterDot(double balance) {
         return (double)((int)(balance * 100)) / 100;
+    }
+
+    public boolean validateSum(@RequestParam int sum, Model model) {
+        if(sum <= 0){
+            model.addAttribute("error", "Введена некорректная сумма");
+            return true;
+        }
+        if(sum > findByAuthentication().getBalance()){
+            model.addAttribute("error", "Недостаточно средств!");
+            model.addAttribute("balance",
+                    roundToTwoSymbolsAfterDot(findByAuthentication().getBalance()));
+            return true;
+        }
+        return false;
     }
 }

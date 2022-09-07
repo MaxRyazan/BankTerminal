@@ -20,14 +20,15 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CreditNotFoundException.class)
     public ResponseEntity<?> handleCreditNotFoundException(){
         Map<String, Object> body = new HashMap<>();
-        body.put(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")), "credit not found");
+        body.put(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")), "Credit not found");
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidDataException.class)
     public ResponseEntity<?> handleInvalidDataException(){
         Map<String, Object> body = new HashMap<>();
-        body.put(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")), "Invalid data");
+        body.put(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")),
+                "Data not valid (check phone numbers / sum / balance / credit status)");
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
@@ -41,7 +42,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFoundException(){
         Map<String, Object> body = new HashMap<>();
-        body.put(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")), "Client not foun");
+        body.put(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss")), "Client not found");
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 

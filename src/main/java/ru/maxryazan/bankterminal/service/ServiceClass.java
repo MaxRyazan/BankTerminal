@@ -17,8 +17,6 @@ public class ServiceClass {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
     }
-
-
     public boolean validateSum(double sum, Client client) {
         return (client.getBalance() >= sum  &&  sum > 0);
     }
@@ -42,6 +40,6 @@ public class ServiceClass {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        throw new IllegalArgumentException();
+        return  false;
     }
 }

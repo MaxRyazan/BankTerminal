@@ -1,12 +1,9 @@
 package ru.maxryazan.bankterminal.model;
 
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,15 +19,15 @@ public class Client{
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
-    String lastName;
+    private String lastName;
     @Column(name = "phone_number")
-    String phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "hash_pin")
-    String pinCode;
+    private String pinCode;
 
     @Column(name = "balance")
-    double balance;
+    private double balance;
 
     @OneToMany(mappedBy = "borrower", fetch = FetchType.LAZY)
     List<Credit> credits;

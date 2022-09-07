@@ -1,7 +1,7 @@
 package ru.maxryazan.bankterminal.exception.exceptions;
 
 public class InvalidDataException extends RuntimeException{
-    public InvalidDataException(String message){
-        super(message);
+    public InvalidDataException(){
+        super();
     }
 }

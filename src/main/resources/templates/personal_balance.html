@@ -3,10 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .divAddMoney{
+            background-color: cadetblue;
+            width: 99.5%;
+            height: 500px;
+        }
+        .container{
+            border: 2px solid black;
+            border-radius: 10px;
+            background-color: white;
+            margin-left: 25%;
+            margin-right: 20%;
+            margin-top: 10%;
+            align-content: center;
+            width: 800px;
+            height: 400px;
+        }
+        .styleInput {
+            width: 100px;
+            height: 40px
+        }
+        .styleInput2 {
+            width: 250px;
+            height: 40px;
+            margin-top: 5%;
+        }
+    </style>
 </head>
-<body>
-    <div th:text="${balance}" style="margin-left: 5%; margin-top: 5%">
-         <h2> рублей</h2>
+<body class="divAddMoney">
+<div class="container">
+    <h3 style="float: left">Баланс: </h3>
+    <div th:text="${balance}" style="margin-left: 10%; margin-top: 2.5%"></div>
+    <div style="margin-top: 5%; margin-left: 2%">
+        <input type="button" value="Пополнить баланс" onclick="location.href='/personal/add-money'" class="styleInput2">
     </div>
+    <div style="margin-top: 25%; margin-left: 70%">
+        <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
+        <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput" style="margin-left: 3.5%">
+    </div>
+</div>
 </body>
 </html>

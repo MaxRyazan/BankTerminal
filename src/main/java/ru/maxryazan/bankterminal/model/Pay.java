@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -28,12 +26,6 @@ public class Pay {
     @JoinColumn(name = "credit_id")
     private Credit credit;
 
-
-    public Pay(String date, double sum, Credit credit) {
-        this.date = date;
-        this.sum = sum;
-        this.credit = credit;
-    }
 
     @Override
     public String toString() {

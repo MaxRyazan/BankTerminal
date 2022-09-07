@@ -6,4 +6,5 @@ import ru.maxryazan.bankterminal.model.Credit;
 
 @Repository
 public interface CreditRepository extends JpaRepository<Credit, Long> {
+
 }

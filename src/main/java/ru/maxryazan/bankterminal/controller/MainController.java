@@ -45,9 +45,6 @@ public class MainController {
         return "personal_page";
     }
 
-
-
-
     @GetMapping("/personal/add-money")
     public String getAddMoneyPage() {
         return "personal_add_money";
@@ -61,7 +58,9 @@ public class MainController {
     }
 
     @GetMapping("/personal/withdraw-money")
-    public String getWithdrawMoneyPage() {
+    public String getWithdrawMoneyPage(Model model) {
+        Client client = clientService.findByAuthentication();
+        model.addAttribute("balance", clientService.roundToTwoSymbolsAfterDot(client.getBalance()));
         return "personal_withdraw_money";
     }
 
@@ -76,12 +75,14 @@ public class MainController {
     @GetMapping("/personal/balance")
     public String getBalancePage(Model model) {
         Client client = clientService.findByAuthentication();
-        model.addAttribute("balance", client.getBalance());
+        model.addAttribute("balance", clientService.roundToTwoSymbolsAfterDot(client.getBalance()));
         return "personal_balance";
     }
 
     @GetMapping("/personal/operations")
-    public String getOperationsPage() {
+    public String getOperationsPage(Model model) {
+        Client client = clientService.findByAuthentication();
+        model.addAttribute("balance", clientService.roundToTwoSymbolsAfterDot(client.getBalance()));
         return "personal_operations";
     }
 

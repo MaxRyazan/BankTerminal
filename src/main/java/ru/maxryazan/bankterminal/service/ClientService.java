@@ -3,6 +3,10 @@ package ru.maxryazan.bankterminal.service;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.maxryazan.bankterminal.exception.exceptions.CreditNotFoundException;
+import ru.maxryazan.bankterminal.exception.exceptions.InvalidDataException;
+import ru.maxryazan.bankterminal.exception.exceptions.NotEnoughMoneyException;
+import ru.maxryazan.bankterminal.exception.exceptions.UserNotFoundException;
 import ru.maxryazan.bankterminal.model.*;
 import ru.maxryazan.bankterminal.repository.ClientRepository;
 
@@ -16,9 +20,11 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
 
 
     public Client findByPhoneNumber(String phoneNumber){
-        return clientRepository.findAll().stream()
-                .filter(client -> client.getPhoneNumber().equals(phoneNumber.replace(" ", "")))
-                .findFirst().orElseThrow(() -> new IllegalArgumentException("user with phone: " + phoneNumber + " not found"));
+       Client cl = clientRepository.findByPhoneNumber(phoneNumber);
+        if (cl == null) {
+            throw new UserNotFoundException();
+        }
+        return cl;
     }
 
     public Client findByAuthentication() {
@@ -38,7 +44,7 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
             if (sum < 0 && client.getBalance() >= Math.abs(sum)) {
                 client.setBalance(client.getBalance() + sum);
                 } else {
-                throw new IllegalArgumentException("no money");
+                throw new NotEnoughMoneyException();
             }
         }
         save(client);
@@ -50,7 +56,7 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
                 || !serviceClass.validateSum(sum, findByAuthentication())
                 || recipientPhone.equals(sender.getPhoneNumber())) {
 
-            throw new IllegalArgumentException("bad data");
+            throw new InvalidDataException();
         }
             Client recipient = findByPhoneNumber(recipientPhone);
 
@@ -99,7 +105,7 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         Client client = findByAuthentication();
         if(serviceClass.validateSum(sum, client)) {
             Credit credit = client.getCredits().stream().filter(credit1 -> credit1.getNumberOfCreditContract().equals(creditId))
-                    .findFirst().orElseThrow(() -> new IllegalArgumentException("credit with number " + creditId + " not found"));
+                    .findFirst().orElseThrow(CreditNotFoundException::new);
             if (checkCredit(credit)) {
                 Pay pay = new Pay();
                 pay.setCredit(credit);
@@ -113,18 +119,17 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
             }
         }
         else {
-            throw  new IllegalArgumentException();
+            throw  new InvalidDataException();
         }
     }
 
     public boolean checkCredit(Credit credit){
         if(credit.getStatus().equals(Status.CLOSED)){
-            throw  new IllegalArgumentException("not available, credit closed");
+            throw  new InvalidDataException();
         }
-        double allSumOfPays = 0;
-        for(Pay p : credit.getPays()){
-            allSumOfPays = p.getSum() + allSumOfPays;
-        }
+
+        double allSumOfPays = credit.getPays().stream().map(Pay::getSum).mapToDouble(a -> a).sum();
+
         credit.setRestOfCredit(credit.getSumWithPercents() - allSumOfPays);
 
         if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() > 0)){
@@ -135,5 +140,9 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         }
         creditService.save(credit);
        return true;
+    }
+
+    public double roundToTwoSymbolsAfterDot(double balance) {
+        return (double)((int)(balance * 100)) / 100;
     }
 }

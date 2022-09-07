@@ -3,13 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .divAddMoney{
+            background-color: cadetblue;
+            width: 99.5%;
+            height: 500px;
+        }
+        .container{
+            border: 2px solid black;
+            border-radius: 10px;
+            background-color: white;
+            margin-left: 25%;
+            margin-right: 20%;
+            margin-top: 10%;
+            align-content: center;
+            width: 800px;
+            height: 400px;
+        }
+        .styleInput {
+            width: 100px;
+            height: 40px
+        }
+        .styleInput2 {
+            width: 200px;
+            height: 35px;
+            font-size: 15px;
+            font-weight: bold;
+            margin-left: 3%;
+        }
+    </style>
 </head>
-<body>
-<form name="f" th:action="@{/personal/add-money}" method="post">
-<label style="margin-left: 5%; margin-top: 5%; border: 2px black">
-    <input type="number" name="sum" min="0" placeholder="0.0"><br><br>
-    <input type="submit" value="Внести">
-</label>
-</form>
+<body class="divAddMoney">
+  <div class="container">
+    <form name="f" th:action="@{/personal/add-money}" method="post" style="margin-top: 5%">
+      <label>
+          <input type="number" name="sum" min="0" placeholder="0.0" class="styleInput2">
+          <input type="submit" value="Внести" class="styleInput">
+      </label>
+    </form>
+      <div style="margin-top: 25%; margin-left: 70%">
+          <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
+          <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput" style="margin-left: 3.5%">
+      </div>
+  </div>
 </body>
 </html>

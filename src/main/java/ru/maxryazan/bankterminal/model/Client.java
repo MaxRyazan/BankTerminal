@@ -26,6 +26,7 @@ public class Client{
     @Column(name = "hash_pin")
     private String pinCode;
 
+
     @Column(name = "balance")
     private double balance;
 
@@ -41,6 +42,9 @@ public class Client{
     @Override
     public String toString() {
         return firstName + " "  + lastName + " " + phoneNumber;
+    }
 
+    public double getBalance() {
+     return  (double)((int)(balance * 100)) / 100;
     }
 }

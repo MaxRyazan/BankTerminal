@@ -23,12 +23,41 @@
     .header{
         text-align: center;
         font-weight: bold;
-        background-color: darksalmon;
+        background-color: cadetblue;
         margin-left: 15%;
         margin-right: 15%;
     }
+    .navbar{
+        margin: 0 15% 2%;
+        width:  70%;
+        height: 40px;
+        background-color: cadetblue;
+    }
+    .styleInput {
+        width: 100px;
+        height: 40px;
+        margin-left: 67.8%
+    }
+    .styleInput2 {
+        width: 100px;
+        height: 40px;
+        margin-left: 2%
+    }
+    .styleInput3 {
+        width: 100px;
+        height: 40px;
+        margin-left: 2%;
+        background-color: lightcoral;
+    }
 </style>
-<body style="background-color: dimgray">
+<div class="navbar">
+    <label>
+        <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
+        <input type="button" value="На главную" onclick="location.href='/personal'" class="styleInput2" style="float: left">
+        <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput3">
+    </label>
+</div>
+<body style="background-color: cadetblue;">
 <div class="container">
     <div class="header">
         <h3>Переводы за неделю:</h3>

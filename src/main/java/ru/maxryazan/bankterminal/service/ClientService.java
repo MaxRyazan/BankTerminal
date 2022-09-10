@@ -14,6 +14,7 @@ import ru.maxryazan.bankterminal.repository.ClientRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -104,13 +105,14 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
 
     public List<Credit> showCredits(){
         Client client = findByAuthentication();
-        return client.getCredits();
+        return client.getCredits().stream().filter(credit -> credit.getStatus().equals(Status.ACTIVE)).collect(Collectors.toList());
     }
 
-    public void getPayForCredit(String creditId, double sum) {
+    public void getPayForCredit(String creditId, double sum, Model model) {
+        String validCreditId = creditId.replace(" ", "");
         Client client = findByAuthentication();
         if(serviceClass.validateSum(sum, client)) {
-            Credit credit = client.getCredits().stream().filter(credit1 -> credit1.getNumberOfCreditContract().equals(creditId))
+            Credit credit = client.getCredits().stream().filter(credit1 -> credit1.getNumberOfCreditContract().equals(validCreditId))
                     .findFirst().orElseThrow(CreditNotFoundException::new);
             if (checkCredit(credit)) {
                 Pay pay = new Pay();
@@ -148,9 +150,9 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
        return true;
     }
 
-    public double roundToTwoSymbolsAfterDot(double balance) {
-        return (double)((int)(balance * 100)) / 100;
-    }
+//    public double roundToTwoSymbolsAfterDot(double balance) {
+//        return (double)((int)(balance * 100)) / 100;
+//    }
 
     public boolean validateSum(@RequestParam int sum, Model model) {
         if(sum <= 0){
@@ -160,9 +162,10 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         if(sum > findByAuthentication().getBalance()){
             model.addAttribute("error", "Недостаточно средств!");
             model.addAttribute("balance",
-                    roundToTwoSymbolsAfterDot(findByAuthentication().getBalance()));
+                    findByAuthentication().getBalance());
             return true;
         }
         return false;
     }
+
 }

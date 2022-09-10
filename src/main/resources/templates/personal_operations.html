@@ -32,6 +32,12 @@
             font-weight: bold;
             margin-left: 3%;
         }
+        .styleInput3 {
+            width: 100px;
+            height: 40px;
+            margin-left: 2%;
+            background-color: lightcoral;
+        }
     </style>
 </head>
 <body class="divAddMoney">
@@ -46,9 +52,12 @@
         </label>
         <div th:text="${error}" style="color: red; margin-left: 25%; margin-top: 2%;"></div>
     </form>
-    <div style="margin-top: 25%; margin-left: 70%">
-        <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
-        <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput" style="margin-left: 3.5%">
+    <div style="margin-top: 30%; margin-left: 58%">
+        <label>
+            <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
+            <input type="button" value="На главную" onclick="location.href='/personal'" class="styleInput" style="float: left">
+            <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput3">
+        </label>
     </div>
 </div>
 </body>

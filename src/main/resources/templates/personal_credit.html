@@ -5,6 +5,9 @@
     <title>Title</title>
 </head>
 <style>
+    .body{
+        background-color: cadetblue;
+    }
     .container{
         margin-top: 2%;
         margin-left: 15%;
@@ -15,22 +18,79 @@
         border: 3px solid black;
         background-color: white;
     }
+    .container2{
+        margin-top: 2%;
+        margin-left: 15%;
+        margin-right: 15%;
+        width: 70%;
+        height: 40px;
+        background-color: cadetblue;
+    }
+    .inputForm{
+        height: 35px;
+        border: 2px solid black;
+        width: 200px;
+    }
+    .inputForm2{
+        height: 35px;
+        border: 2px solid black;
+        width: 100px;
+    }
+    .inputForm3{
+        height: 40px;
+        border: 2px solid black;
+        width: 100px;
+        margin-left: 4%;
+        background-color: lightgreen;
+    }
+    .navbar{
+        margin: 0 15% 2%;
+        width:  70%;
+        height: 40px;
+        background-color: cadetblue;
+    }
+    .styleInput {
+        width: 100px;
+        height: 40px;
+        margin-left: 67.8%
+    }
+    .styleInput2 {
+        width: 100px;
+        height: 40px;
+        margin-left: 2%
+    }
+    .styleInput3 {
+        width: 100px;
+        height: 40px;
+        margin-left: 2%;
+        background-color: lightcoral;
+    }
 </style>
-<body>
+<div class="navbar">
+    <label>
+        <input type="button" value="Назад" onclick="history.back()" class="styleInput" style="float: left">
+        <input type="button" value="На главную" onclick="location.href='/personal'" class="styleInput2" style="float: left">
+        <input type="button" value="Выйти" onclick="location.href='/logout'" class="styleInput3">
+    </label>
+</div>
+<body class="body">
     <div class="container">
         <div th:each="credit : ${credits}">
-            <div th:text="${credit}"></div>
+            <div th:text="${credit}"></div><br>
         </div>
     </div>
 
-    <div class="container">
+    <div class="container2">
         <form name="f" th:action="@{/personal/credit}" method="post">
+            <h3>Внести платёж? Ваш баланс: <label th:text="${balance}"></label></h3>
             <label>
-            <input type="text" name="creditID" placeholder="номер кредитного договора" minlength="8" required>
-            <input type="text" name="sum" placeholder="сумма взноса" required>
-            <input type="submit" value="Заплатить">
+            <input type="text" name="creditID" placeholder="номер кредитного договора" minlength="8" required class="inputForm">
+            <input type="text" name="sum" placeholder="сумма взноса" required class="inputForm2">
+            <input type="submit" value="Заплатить" class="inputForm3">
             </label>
             <div th:text="${error}" style="color: red; margin-left: 2%; margin-top: 2%"></div>
+            <div th:text="${errorId}" style="color: red; margin-left: 2%; margin-top: 2%"></div>
+            <div th:text="${errorSum}" style="color: red; margin-left: 2%; margin-top: 2%"></div>
         </form>
     </div>
 </body>

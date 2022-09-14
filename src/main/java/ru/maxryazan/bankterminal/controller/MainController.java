@@ -55,7 +55,7 @@ public class MainController {
     @PostMapping("/personal/add-money")
     public String postAddMoneyPage(@RequestParam int sum) {
         Client client = clientService.findByAuthentication();
-        clientService.changeBalance(sum, client);
+        client.setBalance(clientService.changeBalance(sum, client));
         return "redirect:/personal";
     }
 
@@ -73,7 +73,7 @@ public class MainController {
         }
         sum = -sum;
         Client client = clientService.findByAuthentication();
-        clientService.changeBalance(sum, client);
+        client.setBalance(clientService.changeBalance(sum, client));
         return "redirect:/personal";
     }
 
@@ -132,7 +132,7 @@ public class MainController {
            model.addAttribute("credits", clientService.showCredits());
            return "personal_credit";
        }
-        clientService.getPayForCredit(creditID, sum, model);
+        clientService.getPayForCredit(creditID, sum);
         return "redirect:/personal";
     }
 }

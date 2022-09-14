@@ -46,6 +46,6 @@ public class Credit {
 
     @Override
     public String toString() {
-        return "Кредит номер: " + numberOfCreditContract + " на сумму: " + sumOfCredit + ". Платёж: " +everyMonthPay + ". Остаток: " +restOfCredit;
+        return "Кредит номер: " + numberOfCreditContract + " на сумму: " + sumOfCredit + ". Платёж: " +everyMonthPay + ". Остаток: " + restOfCredit;
     }
 }

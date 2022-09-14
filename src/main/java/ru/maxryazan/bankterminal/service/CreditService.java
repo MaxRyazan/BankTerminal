@@ -1,5 +1,6 @@
 package ru.maxryazan.bankterminal.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import ru.maxryazan.bankterminal.model.Client;
@@ -8,7 +9,10 @@ import ru.maxryazan.bankterminal.model.Status;
 import ru.maxryazan.bankterminal.repository.CreditRepository;
 
 @Service
-public record CreditService(CreditRepository creditRepository) {
+@RequiredArgsConstructor
+public class CreditService {
+
+    private final CreditRepository creditRepository;
 
     public void save(Credit credit){
         if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() > 0)){

@@ -1,5 +1,6 @@
 package ru.maxryazan.bankterminal.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,14 @@ import java.util.stream.Collectors;
 
 
 @Service
-public record ClientService(ClientRepository clientRepository, TransactionService transactionService,
-                            ServiceClass serviceClass, PayService payService, CreditService creditService) {
+@RequiredArgsConstructor
+public class ClientService {
 
+    private final ClientRepository clientRepository;
+    private final TransactionService transactionService;
+    private final ServiceClass serviceClass;
+    private final PayService payService;
+    private final CreditService creditService;
 
     public Client findByPhoneNumber(String phoneNumber){
        Client cl = clientRepository.findByPhoneNumber(phoneNumber);
@@ -44,25 +50,22 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         clientRepository.save(client);
     }
 
-    public void changeBalance(int sum, Client client) {
+    public double changeBalance(int sum, Client client) {
         if(sum > 0) {
-            client.setBalance(client.getBalance() + sum);
-        } else {
-            if (sum < 0 && client.getBalance() >= Math.abs(sum)) {
-                client.setBalance(client.getBalance() + sum);
-                } else {
-                throw new NotEnoughMoneyException();
-            }
+          return client.getBalance() + sum;
         }
-        save(client);
+        if (sum < 0 && client.getBalance() >= Math.abs(sum)) {
+          return client.getBalance() + sum;
+        } else {
+           throw new NotEnoughMoneyException();
+        }
     }
 
     public void doTransaction(int sum, String recipientPhone){
         Client sender = findByAuthentication();
         if(!serviceClass.validatePhone(recipientPhone)
-                || !serviceClass.validateSum(sum, findByAuthentication())
+                || !serviceClass.validateSum(sum, sender)
                 || recipientPhone.equals(sender.getPhoneNumber())) {
-
             throw new InvalidDataException();
         }
             Client recipient = findByPhoneNumber(recipientPhone);
@@ -103,12 +106,13 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         return paysForLastWeek;
     }
 
+
     public List<Credit> showCredits(){
         Client client = findByAuthentication();
         return client.getCredits().stream().filter(credit -> credit.getStatus().equals(Status.ACTIVE)).collect(Collectors.toList());
     }
 
-    public void getPayForCredit(String creditId, double sum, Model model) {
+    public void getPayForCredit(String creditId, double sum) {
         String validCreditId = creditId.replace(" ", "");
         Client client = findByAuthentication();
         if(serviceClass.validateSum(sum, client)) {
@@ -120,7 +124,8 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
                 pay.setSum(sum);
                 pay.setDate(serviceClass.generateDateWithSeconds());
                 payService.save(pay);
-                credit.setRestOfCredit(credit.getRestOfCredit() - sum);
+                double rest = credit.getRestOfCredit() - sum;
+                credit.setRestOfCredit(rest);
                 creditService.save(credit);
                 client.setBalance(client.getBalance() - sum);
                 save(client);
@@ -137,10 +142,8 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         }
 
         double allSumOfPays = credit.getPays().stream().map(Pay::getSum).mapToDouble(a -> a).sum();
-
         credit.setRestOfCredit(credit.getSumWithPercents() - allSumOfPays);
-
-        if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() > 0)){
+        if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() >= 0)){
             credit.setRestOfCredit(0.0);
             credit.setStatus(Status.CLOSED);
             creditService.save(credit);
@@ -149,10 +152,6 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         creditService.save(credit);
        return true;
     }
-
-//    public double roundToTwoSymbolsAfterDot(double balance) {
-//        return (double)((int)(balance * 100)) / 100;
-//    }
 
     public boolean validateSum(@RequestParam int sum, Model model) {
         if(sum <= 0){
@@ -167,5 +166,4 @@ public record ClientService(ClientRepository clientRepository, TransactionServic
         }
         return false;
     }
-
 }

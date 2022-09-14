@@ -8,3 +8,4 @@
         # jUnit5 + Mockito
         # HTML
         # CSS
+        # MySQL + H2(Тесты)

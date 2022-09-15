@@ -2,6 +2,7 @@ package ru.maxryazan.bankterminal.service;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -53,18 +54,20 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Поиск клиента по номеру телефона и тест ошибки, если клиент не найден")
     void findByPhoneNumberTest() {
      // Дано:
         Client client = createClient();
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
 
      // Результат
-        assertEquals(clientService.findByPhoneNumber(client.getPhoneNumber()), client);
+        assertEquals(client, clientService.findByPhoneNumber(client.getPhoneNumber()));
         assertThrows(UserNotFoundException.class, () -> clientService.findByPhoneNumber("89999999999"));
     }
 
 
     @Test
+    @DisplayName("Проверка существования клиента по номеру телефона TRUE/FALSE")
     void existsByPhoneTest() {
         // Дано:
         Client client = createClient();
@@ -77,6 +80,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Поиск клиента аутентификации")
     void findByAuthenticationTest() {
         // Дано:
         Client client = createClient();
@@ -84,22 +88,24 @@ class ClientServiceTest {
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
 
         // Результат
-        assertEquals(clientService.findByAuthentication(), client);
+        assertEquals(client, clientService.findByAuthentication());
 
     }
 
     @Test
+    @DisplayName("Проверка баланса Клиента, и ошибка, если сумма больше баланса")
     void changeBalanceTest() {
         // Дано:
         Client client = createClient();
 
         // Результат
-        assertEquals(clientService.changeBalance(10000, client), 20000);
-        assertEquals(clientService.changeBalance(-10000, client), 0);
+        assertEquals( 20000, clientService.changeBalance(10000, client));
+        assertEquals(0, clientService.changeBalance(-10000, client));
         assertThrows(NotEnoughMoneyException.class, () -> clientService.changeBalance(-20000, client));
     }
 
     @Test
+    @DisplayName("Тест исключений. Сверка баланса и суммы транзакции")
     void doTransactionTest() {
         // Дано:
         Client sender = createClient();
@@ -129,6 +135,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Тест исключения, если телефоны получателя и отправителя идентичны")
     void doTransactionTest2() {
         // Дано:
         Client sender = createClient();
@@ -149,6 +156,7 @@ class ClientServiceTest {
 
 
     @Test
+    @DisplayName("Тест метода, добавляющего в модель транзакции за последнюю неделю")
     void transactionsForLastWeekTest() {
         Client client = createClient();
         createAuthentication(client);
@@ -170,17 +178,18 @@ class ClientServiceTest {
         given(serviceClass.isThisDateAfterAWeekAgo(transaction1.getTimestamp())).willReturn(true);
         given(serviceClass.isThisDateAfterAWeekAgo(transaction2.getTimestamp())).willReturn(true);
 
-        assertEquals(clientService.transactionsForLastWeek(), all);
+        assertEquals(all, clientService.transactionsForLastWeek());
 
         given(serviceClass.isThisDateAfterAWeekAgo(transaction1.getTimestamp())).willReturn(false);
         given(serviceClass.isThisDateAfterAWeekAgo(transaction2.getTimestamp())).willReturn(false);
 
-        assertEquals(clientService.transactionsForLastWeek(), new ArrayList<>());
+        assertEquals(new ArrayList<>(), clientService.transactionsForLastWeek());
 
 
     }
 
     @Test
+    @DisplayName("Тест метода, добавляющего в модель платежи за последнюю неделю")
     void paysForLastWeekTest() {
         Client client = createClient();
         createAuthentication(client);
@@ -195,14 +204,15 @@ class ClientServiceTest {
 
         given(serviceClass.isThisDateAfterAWeekAgo(pay1.getDate())).willReturn(true);
         given(serviceClass.isThisDateAfterAWeekAgo(pay2.getDate())).willReturn(true);
-           assertEquals(clientService.paysForLastWeek(),pays);
+           assertEquals(pays, clientService.paysForLastWeek());
 
         given(serviceClass.isThisDateAfterAWeekAgo(pay1.getDate())).willReturn(false);
         given(serviceClass.isThisDateAfterAWeekAgo(pay2.getDate())).willReturn(false);
-           assertEquals(clientService.paysForLastWeek(), new ArrayList<>());
+           assertEquals(new ArrayList<>(), clientService.paysForLastWeek());
     }
 
     @Test
+    @DisplayName("Тест метода, добавляющего в модель АКТИВНЫЕ  кредиты")
     void showCreditsTest() {
         Client client = createClient();
         createAuthentication(client);
@@ -215,10 +225,11 @@ class ClientServiceTest {
         credit2.setRestOfCredit(1);
         client.setCredits(List.of(credit1, credit2));
 
-        assertEquals(clientService.showCredits(), List.of(credit2));
+        assertEquals(List.of(credit2), clientService.showCredits());
     }
 
     @Test
+    @DisplayName("Тест выброса ошибки при попытке платежа за кредит")
     void getPayForCreditTest() {
         Client client = createClient();
         createAuthentication(client);
@@ -233,6 +244,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Тест выброса ошибки при платеже, если такого кредита НЕТ")
     void getPayForCreditTest2() {
         Client client = createClient();
         createAuthentication(client);
@@ -248,6 +260,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Проверка изменения баланса клиента, при внесении платежа")
     void getPayForCreditTest3() {
         Client client = createClient();
         createAuthentication(client);
@@ -271,11 +284,12 @@ class ClientServiceTest {
 
         clientService.getPayForCredit(credit.getNumberOfCreditContract(), sum);
 
-        assertEquals(client.getBalance(), 9000);
+        assertEquals(9000, client.getBalance());
 
     }
 
     @Test
+    @DisplayName("Проверка статуса кредита. FALSE если CLOSED")
     void checkCreditTest() {
         // if credit.getStatus = CLOSED
         Credit credit = new Credit();
@@ -285,6 +299,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Проверка изменения статуса кредита при внесении последнего платежа.")
     void checkCreditTest2() {
         //if credit.getRest < 1 &&  > 0
         Credit credit = new Credit();
@@ -299,11 +314,12 @@ class ClientServiceTest {
         pay.setCredit(credit);
 
         assertFalse(clientService.checkCredit(credit));
-        assertEquals(credit.getStatus(), Status.CLOSED);
+        assertEquals(Status.CLOSED, credit.getStatus());
 
     }
 
     @Test
+    @DisplayName("Проверка статуса кредита при внесении платежа. TRUE если остаток кредита больше 1 рубля")
     void checkCreditTest3() {
         Credit credit = new Credit();
         credit.setStatus(Status.ACTIVE);
@@ -316,11 +332,13 @@ class ClientServiceTest {
         pays.add(pay);
         pay.setCredit(credit);
 
+         // 300 - 200 > 1  -> true
         assertTrue(clientService.checkCredit(credit));
 
     }
 
     @Test
+    @DisplayName("Проверка суммы. <=0  -> true")
     void validateSumTest() {
         //if sum <=0
         int sum = 0;
@@ -332,6 +350,7 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Проверка суммы. <= client.balance  -> true")
     void validateSumTest2() {
         //if sum > client.getBalance()
         int sum = 20000;
@@ -341,14 +360,16 @@ class ClientServiceTest {
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
 
         Model model = Mockito.mock(Model.class);
+        //баланс клиента 10000, сумма 20000 -> true
         assertTrue(clientService.validateSum(sum, model));
 
-        //if sum < client.getBalance()
+        //баланс клиента 10000, сумма 20 -> false
         int sum2 = 20;
         assertFalse(clientService.validateSum(sum2, model));
 
     }
 
+    @DisplayName("Вспомогательный метод создания клиента")
     private Client createClient(){
         Client client = new Client();
         client.setFirstName("Max");
@@ -358,6 +379,8 @@ class ClientServiceTest {
         client.setBalance(10000);
         return  client;
     }
+
+    @DisplayName("Вспомогательный метод создания аутентификации у клиента")
     private void createAuthentication(Client client){
         SecurityContextHolder.getContext().setAuthentication
                 (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));

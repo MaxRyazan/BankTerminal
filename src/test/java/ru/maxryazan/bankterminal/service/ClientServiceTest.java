@@ -55,12 +55,7 @@ class ClientServiceTest {
     @Test
     void findByPhoneNumberTest() {
      // Дано:
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(0);
+        Client client = createClient();
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
 
      // Результат
@@ -72,12 +67,7 @@ class ClientServiceTest {
     @Test
     void existsByPhoneTest() {
         // Дано:
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(0);
+        Client client = createClient();
         given(clientRepository.existsByPhoneNumber(client.getPhoneNumber())).willReturn(true);
 
         // Результат
@@ -88,19 +78,10 @@ class ClientServiceTest {
 
     @Test
     void findByAuthenticationTest() {
-
         // Дано:
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(0);
-
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+        Client client = createClient();
+        createAuthentication(client);
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
-
 
         // Результат
         assertEquals(clientService.findByAuthentication(), client);
@@ -110,12 +91,7 @@ class ClientServiceTest {
     @Test
     void changeBalanceTest() {
         // Дано:
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(10000);
+        Client client = createClient();
 
         // Результат
         assertEquals(clientService.changeBalance(10000, client), 20000);
@@ -126,23 +102,10 @@ class ClientServiceTest {
     @Test
     void doTransactionTest() {
         // Дано:
-        Client sender = new Client();
-        sender.setFirstName("Max");
-        sender.setLastName("Ivanov");
-        sender.setPhoneNumber("89505557070");
-        sender.setPinCode("password");
-        sender.setBalance(10000);
-            Client recipient = new Client();
-            recipient.setFirstName("Дарья");
-            recipient.setLastName("Сумкина");
-            recipient.setPhoneNumber("89121502018");
-            recipient.setPinCode("password");
-            recipient.setBalance(10000);
+        Client sender = createClient();
+        createAuthentication(sender);
+        Client recipient = createClient();
 
-
-
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(sender.getPhoneNumber(), sender.getPinCode()));
         given(clientRepository.findByPhoneNumber(sender.getPhoneNumber())).willReturn(sender);
 
         // Результат
@@ -168,22 +131,10 @@ class ClientServiceTest {
     @Test
     void doTransactionTest2() {
         // Дано:
-        Client sender = new Client();
-        sender.setFirstName("Max");
-        sender.setLastName("Ivanov");
-        sender.setPhoneNumber("89505557070");
-        sender.setPinCode("password");
-        sender.setBalance(10000);
-                Client recipient = new Client();
-                recipient.setFirstName("Max");
-                recipient.setLastName("Ivanov");
-                recipient.setPhoneNumber("89505557070");
-                recipient.setPinCode("password");
-                recipient.setBalance(10000);
+        Client sender = createClient();
+        createAuthentication(sender);
+        Client recipient = createClient();
 
-
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(sender.getPhoneNumber(), sender.getPinCode()));
         given(clientRepository.findByPhoneNumber(sender.getPhoneNumber())).willReturn(sender);
         int sum = 5000;
 
@@ -192,21 +143,15 @@ class ClientServiceTest {
         given(serviceClass.validateSum(sum, sender)).willReturn(true);
 
         // Результат
-        assertThrows(InvalidDataException.class, () -> clientService.doTransaction(sum, "89505557070"));
-
+        assertThrows(InvalidDataException.class, () -> clientService.doTransaction(sum, sender.getPhoneNumber()));
     }
+
 
 
     @Test
     void transactionsForLastWeekTest() {
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(10000);
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+        Client client = createClient();
+        createAuthentication(client);
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
 
             Transaction transaction1 = new Transaction();
@@ -237,14 +182,8 @@ class ClientServiceTest {
 
     @Test
     void paysForLastWeekTest() {
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(10000);
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+        Client client = createClient();
+        createAuthentication(client);
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
 
         Credit credit = new Credit();
@@ -265,14 +204,8 @@ class ClientServiceTest {
 
     @Test
     void showCreditsTest() {
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(10000);
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+        Client client = createClient();
+        createAuthentication(client);
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
 
         Credit credit1 = new Credit();
@@ -286,14 +219,8 @@ class ClientServiceTest {
 
     @Test
     void getPayForCreditTest() {
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(10000);
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+        Client client = createClient();
+        createAuthentication(client);
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
         double sum = 500d;
         Credit credit = new Credit();
@@ -306,14 +233,8 @@ class ClientServiceTest {
 
     @Test
     void getPayForCreditTest2() {
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(10000);
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+        Client client = createClient();
+        createAuthentication(client);
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
         double sum = 500d;
         Credit credit = new Credit();
@@ -327,20 +248,17 @@ class ClientServiceTest {
 
     @Test
     void getPayForCreditTest3() {
-        Client client = new Client();
-        client.setFirstName("Max");
-        client.setLastName("Ivanov");
-        client.setPhoneNumber("89505557070");
-        client.setPinCode("password");
-        client.setBalance(10000);
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+        Client client = createClient();
+        createAuthentication(client);
+
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
         double sum = 1000;
         Credit credit = new Credit();
         credit.setNumberOfCreditContract("88888888");
         credit.setStatus(Status.ACTIVE);
         credit.setRestOfCredit(10000);
+        credit.setSumWithPercents(10000);
+
 
         client.setCredits(List.of(credit));
 
@@ -349,20 +267,16 @@ class ClientServiceTest {
         pay.setCredit(credit);
         pay.setSum(sum);
         credit.setPays(List.of(pay));
-        System.out.println(credit.getRestOfCredit() + " creditrest");
-        System.out.println(pay.getSum() + " paysum");
-        System.out.println(credit.getPays() + " pays");
+
         clientService.getPayForCredit(credit.getNumberOfCreditContract(), sum);
 
-
-        System.out.println(client.getBalance() + " " + credit.getRestOfCredit());
         assertEquals(client.getBalance(), 9000);
-//        assertEquals(credit.getRestOfCredit(), 9000);
 
     }
 
     @Test
     void checkCreditTest() {
+        // if credit.getStatus = CLOSED
         Credit credit = new Credit();
         credit.setStatus(Status.CLOSED);
         assertThrows(InvalidDataException.class, () -> clientService.checkCredit(credit));
@@ -370,6 +284,7 @@ class ClientServiceTest {
 
     @Test
     void checkCreditTest2() {
+        //if credit.getRest < 1 &&  > 0
         Credit credit = new Credit();
         credit.setStatus(Status.ACTIVE);
         credit.setSumWithPercents(200);
@@ -399,10 +314,13 @@ class ClientServiceTest {
         pays.add(pay);
         pay.setCredit(credit);
 
+        assertTrue(clientService.checkCredit(credit));
+
     }
 
     @Test
     void validateSumTest() {
+        //if sum <=0
         int sum = 0;
         int sum2 = -2;
         Model model = Mockito.mock(Model.class);
@@ -413,22 +331,33 @@ class ClientServiceTest {
 
     @Test
     void validateSumTest2() {
-        int sum = 100;
-        Client client = new Client();
-        client.setBalance(50);
-        client.setPhoneNumber("89505005050");
-        client.setPinCode("");
+        //if sum > client.getBalance()
+        int sum = 20000;
+        Client client = createClient();
+        createAuthentication(client);
 
-        SecurityContextHolder.getContext().setAuthentication
-                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
         given(clientRepository.findByPhoneNumber(client.getPhoneNumber())).willReturn(client);
-
 
         Model model = Mockito.mock(Model.class);
         assertTrue(clientService.validateSum(sum, model));
 
+        //if sum < client.getBalance()
         int sum2 = 20;
         assertFalse(clientService.validateSum(sum2, model));
 
+    }
+
+    private Client createClient(){
+        Client client = new Client();
+        client.setFirstName("Max");
+        client.setLastName("Ivanov");
+        client.setPhoneNumber("89505557070");
+        client.setPinCode("password");
+        client.setBalance(10000);
+        return  client;
+    }
+    private void createAuthentication(Client client){
+        SecurityContextHolder.getContext().setAuthentication
+                (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
     }
 }

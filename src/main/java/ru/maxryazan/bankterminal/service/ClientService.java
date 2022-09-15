@@ -70,6 +70,10 @@ public class ClientService {
         }
             Client recipient = findByPhoneNumber(recipientPhone);
 
+            createTransaction(sender, recipient, sum);
+        }
+
+        private void createTransaction(Client sender, Client recipient, int sum){
             Transaction transaction = new Transaction();
             transaction.setTimestamp(serviceClass.generateDateWithSeconds());
             transaction.setSum(sum);

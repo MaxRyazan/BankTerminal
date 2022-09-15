@@ -117,6 +117,12 @@ public class ClientService {
 
     public List<Credit> showCredits(){
         Client client = findByAuthentication();
+        for(Credit cr : client.getCredits()){
+            if(cr.getRestOfCredit() >=0 && cr.getRestOfCredit() < 1){
+                cr.setStatus(Status.CLOSED);
+                creditService.save(cr);
+            }
+        }
         return client.getCredits().stream().filter(credit -> credit.getStatus().equals(Status.ACTIVE)).collect(Collectors.toList());
     }
 
@@ -145,10 +151,6 @@ public class ClientService {
     }
 
     public boolean checkCredit(Credit credit){
-        if(credit.getStatus().equals(Status.CLOSED)){
-            throw  new InvalidDataException();
-        }
-
         double allSumOfPays = credit.getPays().stream().map(Pay::getSum).mapToDouble(a -> a).sum();
         credit.setRestOfCredit(credit.getSumWithPercents() - allSumOfPays);
         if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() >= 0)){

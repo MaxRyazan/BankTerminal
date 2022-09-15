@@ -42,6 +42,7 @@
 </head>
 <body class="divAddMoney">
   <div class="container">
+      <div th:text="${balance}" style="margin-left: 80%; margin-top: 5%; font-weight: bold; float: left"></div>
     <form name="f" th:action="@{/personal/add-money}" method="post" style="margin-top: 5%">
       <label>
           <input type="number" name="sum" min="0" placeholder="0.0" class="styleInput2" required th:min="1">

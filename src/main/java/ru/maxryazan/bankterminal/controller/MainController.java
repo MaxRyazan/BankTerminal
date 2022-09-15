@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.maxryazan.bankterminal.model.Client;
+import ru.maxryazan.bankterminal.model.Credit;
 import ru.maxryazan.bankterminal.service.ClientService;
 import ru.maxryazan.bankterminal.service.CreditService;
 
@@ -48,7 +49,8 @@ public class MainController {
     }
 
     @GetMapping("/personal/add-money")
-    public String getAddMoneyPage() {
+    public String getAddMoneyPage(Model model) {
+        model.addAttribute("balance", clientService.findByAuthentication().getBalance());
         return "personal_add_money";
     }
 
@@ -119,8 +121,10 @@ public class MainController {
 
     @GetMapping("/personal/credit")
     public String getCreditPage(Model model) {
+        Client client = clientService.findByAuthentication();
+
         model.addAttribute("credits", clientService.showCredits());
-        model.addAttribute("balance", clientService.findByAuthentication().getBalance());
+        model.addAttribute("balance", client.getBalance());
         return "personal_credit";
     }
 

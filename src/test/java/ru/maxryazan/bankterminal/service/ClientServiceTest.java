@@ -212,6 +212,7 @@ class ClientServiceTest {
         Credit credit2 = new Credit();
         credit1.setStatus(Status.CLOSED);
         credit2.setStatus(Status.ACTIVE);
+        credit2.setRestOfCredit(1);
         client.setCredits(List.of(credit1, credit2));
 
         assertEquals(clientService.showCredits(), List.of(credit2));
@@ -279,7 +280,8 @@ class ClientServiceTest {
         // if credit.getStatus = CLOSED
         Credit credit = new Credit();
         credit.setStatus(Status.CLOSED);
-        assertThrows(InvalidDataException.class, () -> clientService.checkCredit(credit));
+        credit.setPays(List.of());
+        assertFalse(clientService.checkCredit(credit));
     }
 
     @Test

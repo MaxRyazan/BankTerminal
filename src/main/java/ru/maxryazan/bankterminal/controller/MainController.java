@@ -56,6 +56,7 @@ public class MainController {
     public String postAddMoneyPage(@RequestParam int sum) {
         Client client = clientService.findByAuthentication();
         client.setBalance(clientService.changeBalance(sum, client));
+        clientService.save(client);
         return "redirect:/personal";
     }
 
@@ -74,6 +75,7 @@ public class MainController {
         sum = -sum;
         Client client = clientService.findByAuthentication();
         client.setBalance(clientService.changeBalance(sum, client));
+        clientService.save(client);
         return "redirect:/personal";
     }
 

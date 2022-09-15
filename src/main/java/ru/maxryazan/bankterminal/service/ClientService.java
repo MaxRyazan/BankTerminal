@@ -46,7 +46,7 @@ public class ClientService {
         return findByPhoneNumber(phone);
     }
 
-    private void save(Client client) {
+    public void save(Client client) {
         clientRepository.save(client);
     }
 
@@ -80,6 +80,10 @@ public class ClientService {
             transaction.setSender(sender);
             transaction.setRecipient(recipient);
             transactionService.save(transaction);
+            sender.setBalance(sender.getBalance() - sum);
+            recipient.setBalance(recipient.getBalance() + sum);
+            save(recipient);
+            save(sender);
         }
 
     public List<Transaction> transactionsForLastWeek() {
@@ -148,7 +152,7 @@ public class ClientService {
         double allSumOfPays = credit.getPays().stream().map(Pay::getSum).mapToDouble(a -> a).sum();
         credit.setRestOfCredit(credit.getSumWithPercents() - allSumOfPays);
         if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() >= 0)){
-            credit.setRestOfCredit(0.0);
+            credit.setRestOfCredit(0);
             credit.setStatus(Status.CLOSED);
             creditService.save(credit);
             return false;

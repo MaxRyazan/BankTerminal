@@ -36,7 +36,9 @@ public class ServiceClass {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         try {
             Date date2 = simpleDateFormat.parse(simpleDate2);
-            return date2.after(dateAWeekAgo);
+            if(date2.after(dateAWeekAgo)) {
+            return true;
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }

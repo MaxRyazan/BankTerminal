@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,8 +50,8 @@ class ClientServiceTest {
 
     @BeforeEach
     void setUp() {
-        clientService = new ClientService(clientRepository, transactionService, serviceClass,
-                payService,  creditService);
+        clientService = new ClientService(clientRepository, transactionService,
+                serviceClass, payService,  creditService);
 
     }
 
@@ -151,6 +153,28 @@ class ClientServiceTest {
 
         // Результат
         assertThrows(InvalidDataException.class, () -> clientService.doTransaction(sum, sender.getPhoneNumber()));
+    }
+
+    @Test
+    @DisplayName("Проверка работы метода, если исключений не выявлено")
+    void doTransactionTest3() {
+        // Дано:
+        Client sender = createClient();
+        createAuthentication(sender);
+        Client recipient = createClient();
+        recipient.setPhoneNumber("88005001000");
+
+        int sum = 5000;
+        given(clientRepository.findByPhoneNumber(sender.getPhoneNumber())).willReturn(sender);
+        given(clientRepository.findByPhoneNumber(recipient.getPhoneNumber())).willReturn(recipient);
+        given(serviceClass.validatePhone(recipient.getPhoneNumber())).willReturn(true);
+        given(serviceClass.validateSum(sum, sender)).willReturn(true);
+
+        // Результат
+        clientService.doTransaction(sum, recipient.getPhoneNumber());
+
+        assertEquals(5000, sender.getBalance());
+        assertEquals(15000, recipient.getBalance());
     }
 
 
@@ -337,15 +361,15 @@ class ClientServiceTest {
 
     }
 
-    @Test
+
     @DisplayName("Проверка суммы. <=0  -> true")
-    void validateSumTest() {
+    @ParameterizedTest
+    @ValueSource(ints = {0, -2})
+    void validateSumTest(int sum) {
         //if sum <=0
-        int sum = 0;
-        int sum2 = -2;
         Model model = Mockito.mock(Model.class);
         assertTrue(clientService.validateSum(sum, model));
-        assertTrue(clientService.validateSum(sum2, model));
+        assertTrue(clientService.validateSum(sum, model));
 
     }
 
@@ -384,5 +408,18 @@ class ClientServiceTest {
     private void createAuthentication(Client client){
         SecurityContextHolder.getContext().setAuthentication
                 (new UsernamePasswordAuthenticationToken(client.getPhoneNumber(), client.getPinCode()));
+    }
+
+    @Test
+    @DisplayName("Проверка изменения баланса клиенто после совершения транзакции")
+    void createTransaction() {
+        Client sender = createClient();
+        Client recipient = createClient();
+        recipient.setPhoneNumber("89505557077");
+
+        clientService.createTransaction(sender, recipient, 5000);
+
+        assertEquals(5000, sender.getBalance());
+        assertEquals(15000, recipient.getBalance());
     }
 }

@@ -15,7 +15,7 @@ public class CreditService {
     private final CreditRepository creditRepository;
 
     public void save(Credit credit){
-        if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() > 0)){
+        if(credit.getRestOfCredit() < 1 && (credit.getRestOfCredit() >= 0)){
             credit.setRestOfCredit(0.0);
             credit.setStatus(Status.CLOSED);
         }
